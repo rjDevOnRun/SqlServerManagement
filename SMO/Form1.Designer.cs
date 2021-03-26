@@ -41,6 +41,8 @@ namespace SMO
             this.btnBackup = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
             this.lblPercent = new System.Windows.Forms.Label();
+            this.btnCreateDatabase = new System.Windows.Forms.Button();
+            this.btnImpExp = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -66,6 +68,7 @@ namespace SMO
             this.txtDatabase.Name = "txtDatabase";
             this.txtDatabase.Size = new System.Drawing.Size(415, 20);
             this.txtDatabase.TabIndex = 3;
+            this.txtDatabase.Text = "TestSMO";
             // 
             // label2
             // 
@@ -82,6 +85,7 @@ namespace SMO
             this.txtUID.Name = "txtUID";
             this.txtUID.Size = new System.Drawing.Size(415, 20);
             this.txtUID.TabIndex = 5;
+            this.txtUID.Text = "sa";
             // 
             // label3
             // 
@@ -99,6 +103,7 @@ namespace SMO
             this.txtPwd.PasswordChar = '*';
             this.txtPwd.Size = new System.Drawing.Size(415, 20);
             this.txtPwd.TabIndex = 7;
+            this.txtPwd.Text = "Ladyinblue@123";
             // 
             // label4
             // 
@@ -148,11 +153,33 @@ namespace SMO
             this.lblPercent.Text = "0%";
             this.lblPercent.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // btnCreateDatabase
+            // 
+            this.btnCreateDatabase.Location = new System.Drawing.Point(322, 202);
+            this.btnCreateDatabase.Name = "btnCreateDatabase";
+            this.btnCreateDatabase.Size = new System.Drawing.Size(119, 27);
+            this.btnCreateDatabase.TabIndex = 12;
+            this.btnCreateDatabase.Text = "New Database";
+            this.btnCreateDatabase.UseVisualStyleBackColor = true;
+            this.btnCreateDatabase.Click += new System.EventHandler(this.btnCreateDatabase_Click);
+            // 
+            // btnImpExp
+            // 
+            this.btnImpExp.Location = new System.Drawing.Point(447, 202);
+            this.btnImpExp.Name = "btnImpExp";
+            this.btnImpExp.Size = new System.Drawing.Size(119, 27);
+            this.btnImpExp.TabIndex = 13;
+            this.btnImpExp.Text = "Import/Export";
+            this.btnImpExp.UseVisualStyleBackColor = true;
+            this.btnImpExp.Click += new System.EventHandler(this.btnImpExp_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(597, 290);
+            this.Controls.Add(this.btnImpExp);
+            this.Controls.Add(this.btnCreateDatabase);
             this.Controls.Add(this.lblPercent);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.btnBackup);
@@ -189,6 +216,8 @@ namespace SMO
         private System.Windows.Forms.Button btnBackup;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Label lblPercent;
+        private System.Windows.Forms.Button btnCreateDatabase;
+        private System.Windows.Forms.Button btnImpExp;
     }
 }
 
