@@ -36,7 +36,7 @@ namespace SMO
                     Action = BackupActionType.Database,
                     Database = txtDatabase.Text
                 };
-                backup.Devices.AddDevice(@"D:\DEVELOPMENT\Visual_C\SqlServerManagement\DbBackupTest.bak",
+                backup.Devices.AddDevice(@"D:\DEVELOPMENT\DATABASES\Backups\SqlServerManagement\DbBackupTest.bak",
                     DeviceType.File);
 
                 backup.Initialize = true;
@@ -81,77 +81,58 @@ namespace SMO
             //https://stackoverflow.com/questions/7783229/create-failed-for-database-smo-c
 
             Server dbServer = new Server(new ServerConnection(txtServer.Text, txtUID.Text, txtPwd.Text));
-            Database database = new Database(dbServer, "NewDbUsingSMO");
+            Database database = new Database(dbServer, txtDatabase.Text);
 
             try
             {
                 //bool att = false;
                 database.Create();
-                //dbServer.Databases[0]
+
+                lblStatus.Invoke((MethodInvoker)delegate
+                {
+                    lblStatus.Text = $"Success: {txtDatabase.Text} database created!";
+                });
             }
             catch (Exception ex)
             {
+                string errMsg = string.Empty;
+
                 if (ex.InnerException.InnerException != null)
                 {
-                    MessageBox.Show(ex.InnerException.InnerException.Message, "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    errMsg = ex.InnerException.InnerException.Message;
                 }
                 else
                 {
-                    MessageBox.Show(ex.Message, "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    errMsg = ex.Message;
                 }
+
+                MessageBox.Show(errMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                lblStatus.Invoke((MethodInvoker)delegate
+                {
+                    lblStatus.Text = errMsg;
+                });
             }
         }
 
         private void btnImpExp_Click(object sender, EventArgs e)
         {
-            //https://www.codeproject.com/Tips/767161/Export-and-Import-Database-using-SMO
-            // https://stackoverflow.com/questions/17063248/copying-table-from-one-sql-server-to-another
+            ImportExportDb importExport = new ImportExportDb();
+            importExport.ShowDialog();
+            
+            ////https://www.codeproject.com/Tips/767161/Export-and-Import-Database-using-SMO
+            //// https://stackoverflow.com/questions/17063248/copying-table-from-one-sql-server-to-another
 
-            Server sourceServer = new Server("server");
-            String dbName = "database";
-
-            // Connect to the local, default instance of SQL Server. 
-
-            // Reference the database.  
-            Database db = sourceServer.Databases[dbName];
-
-            // Define a Scripter object and set the required scripting options. 
-            Scripter scripter = new Scripter(sourceServer);
-            scripter.Options.ScriptDrops = false;
-            scripter.Options.WithDependencies = true;
-            scripter.Options.Indexes = true;   // To include indexes
-            scripter.Options.DriAllConstraints = true;   // to include referential constraints in the script
-
-            // Iterate through the tables in database and script each one. Display the script.   
-            foreach (Table tb in db.Tables)
-            {
-                // check if the table is not a system table
-                if (tb.IsSystemObject == false)
-                {
-                    Console.WriteLine("-- Scripting for table " + tb.Name);
-
-                    // Generating script for table tb
-                    System.Collections.Specialized.StringCollection sc = scripter.Script(new Urn[] { tb.Urn });
-                    foreach (string st in sc)
-                    {
-                        //ado.net to destination 
-                        Console.WriteLine(st);//SqlCommand.ExecuteNonQuery();
-                    }
-                    Console.WriteLine("--");
-                }
-            }
+            
         }
 
         static void CreateTableFromTable(string fromConnection, string toConnection, string dbName, string tablename, bool copyData = false)
         {
             // https://stackoverflow.com/questions/17063248/copying-table-from-one-sql-server-to-another
 
-            Server fromServer = new Server(new ServerConnection(new SqlConnection(fromConnection)));
-            Database db = fromServer.Databases[dbName];
+            Server sourceDbServer = new Server(new ServerConnection(new SqlConnection(fromConnection)));
+            Database sourceDatabase = sourceDbServer.Databases[dbName];
 
-            Transfer transfer = new Transfer(db);
+            Transfer transfer = new Transfer(sourceDatabase);
             transfer.CopyAllObjects = false;
             transfer.DropDestinationObjectsFirst = false;
             transfer.CopySchema = false;   //Database schema? Or Table schema? I DO NOT want to overwrite the db schema
@@ -159,7 +140,7 @@ namespace SMO
             transfer.DestinationServer = "?";
             transfer.DestinationDatabase = dbName;
             transfer.Options.IncludeIfNotExists = true;
-            transfer.ObjectList.Add(db.Tables[tablename]);
+            transfer.ObjectList.Add(sourceDatabase.Tables[tablename]);
 
             transfer.TransferData();
         }
